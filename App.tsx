@@ -589,7 +589,7 @@ const App: React.FC = () => {
                       : 'bg-white border-black/10 text-zinc-400 group-hover:text-black group-hover:bg-zinc-100'
                    }`}>
                       {exp.id === 'work-3' ? (
-                        <img src={whiteTulipLogo} alt="White Tulip Health Foundation" className="w-full h-full object-cover" />
+                        <img src={whiteTulipLogo} alt="White Tulip Health Foundation" className="w-7 h-7 object-contain" />
                       ) : (
                         exp.title[0]
                       )}
