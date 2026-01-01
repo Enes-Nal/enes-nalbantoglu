@@ -6,6 +6,7 @@ import ContributionGraph from './components/ContributionGraph';
 import SocialHoverCard from './components/SocialHoverCard';
 import ProjectExplorer from './components/ProjectExplorer';
 import FloatingNav from './components/FloatingNav';
+import ResumeView from './components/ResumeView';
 import { RESUME_DATA, TECHNICAL_SKILLS } from './constants';
 import profileImage from './assets/image0.jpg';
 import turkishFlag from './assets/turkey-square-national-flag-vector.jpg';
@@ -139,6 +140,7 @@ const App: React.FC = () => {
   const [viewCount, setViewCount] = useState(124);
   const [displayCount, setDisplayCount] = useState(124);
   const [isLoadingViews, setIsLoadingViews] = useState(true);
+  const [isResumeViewOpen, setIsResumeViewOpen] = useState(false);
   
   // Real view counter using CountAPI
   useEffect(() => {
@@ -243,13 +245,8 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
   
-  const handleDownloadResume = () => {
-    const link = document.createElement('a');
-    link.href = resumePdf;
-    link.download = 'Mustafa Enes Nalbantoglu Resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleViewResume = () => {
+    setIsResumeViewOpen(true);
   };
 
   const workExp = RESUME_DATA.find(c => c.id === 'work')?.items || [];
@@ -376,10 +373,10 @@ const App: React.FC = () => {
 
         {/* 1. Header Section */}
         <DraftingSection theme={theme} isHeader id="header">
-          <div className="w-full text-center">
-            <FloatingNav theme={theme} toggleTheme={toggleTheme} displayCount={displayCount} />
-          </div>
-          <div className="flex flex-col md:flex-row items-start justify-between gap-3 mt-4">
+          {/* Navbar is fixed at top, no need for wrapper */}
+          <FloatingNav theme={theme} toggleTheme={toggleTheme} displayCount={displayCount} />
+          <div className="mt-20">
+            <div className="flex flex-col md:flex-row items-start justify-between gap-3">
             <div className="flex gap-4 items-center">
               <div className="relative">
                 <div className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border shrink-0 transition-colors duration-500 ${
@@ -396,6 +393,7 @@ const App: React.FC = () => {
                 <p className={`text-sm md:text-base font-light italic ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>Software Engineer & CS Student</p>
               </div>
             </div>
+          </div>
           </div>
         </DraftingSection>
 
@@ -457,12 +455,12 @@ const App: React.FC = () => {
           
           <div className="flex flex-wrap gap-3">
             <button 
-              onClick={handleDownloadResume}
+              onClick={handleViewResume}
               className={`px-5 py-2 text-xs font-semibold rounded-xl transition-all ${
                 theme === 'dark' ? 'bg-white text-black hover:bg-zinc-200' : 'bg-black text-white hover:bg-zinc-800'
               }`}
             >
-              Download resume
+              View resume
             </button>
             <button className={`px-5 py-2 border text-xs font-medium rounded-xl transition-all ${
               theme === 'dark' 
@@ -585,6 +583,14 @@ const App: React.FC = () => {
         <PlusSymbol className={`-bottom-[10px] -left-[10px] ${crosshairColor}`} />
         <PlusSymbol className={`-bottom-[10px] -right-[10px] ${crosshairColor}`} />
       </main>
+      
+      {/* Resume View Modal */}
+      <ResumeView 
+        isOpen={isResumeViewOpen}
+        onClose={() => setIsResumeViewOpen(false)}
+        resumeUrl={resumePdf}
+        theme={theme}
+      />
     </div>
   );
 };

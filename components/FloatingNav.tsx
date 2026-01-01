@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 type ReactNode = React.ReactNode;
 
@@ -48,13 +48,6 @@ const TablerIcon = ({ name, className }: { name: string, className?: string }) =
 
 const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCount }) => {
   const [activeSection, setActiveSection] = useState('header');
-  const [isFloating, setIsFloating] = useState(false);
-  const [transitionOffset, setTransitionOffset] = useState(0);
-  const navRef = useRef<HTMLElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const initialTopRef = useRef<number>(0);
-  const initialHeightRef = useRef<number>(0);
-  const initialLeftRef = useRef<number>(0);
 
   const navItems = [
     { id: 'header', label: 'Home', icon: 'home' },
@@ -66,79 +59,23 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
   ];
 
   useEffect(() => {
-    // Store initial position and height on mount
-    if (wrapperRef.current && initialTopRef.current === 0) {
-      const rect = wrapperRef.current.getBoundingClientRect();
-      initialTopRef.current = rect.top + window.scrollY;
-      initialHeightRef.current = rect.height;
-    }
-  }, []);
-
-  // Update height when navbar content changes
-  useEffect(() => {
-    if (navRef.current && !isFloating) {
-      const rect = navRef.current.getBoundingClientRect();
-      initialHeightRef.current = rect.height;
-    }
-  }, [isFloating, displayCount]);
-
-  useEffect(() => {
-    let rafId: number;
-    
     const handleScroll = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      
-      rafId = requestAnimationFrame(() => {
-        const currentScrollY = window.scrollY;
-        
-        // Make navbar floating after scrolling past its initial position
-        if (initialTopRef.current > 0 && currentScrollY >= initialTopRef.current - 10) {
-          if (!isFloating && navRef.current) {
-            // Calculate current visual position to maintain continuity
-            const rect = navRef.current.getBoundingClientRect();
-            const centerX = window.innerWidth / 2;
-            const currentCenterX = rect.left + rect.width / 2;
-            const offset = currentCenterX - centerX;
-            
-            // Set offset to maintain visual position
-            setTransitionOffset(offset);
-            setIsFloating(true);
-            
-            // Smoothly transition offset to 0 (centered) after transition completes
-            setTimeout(() => {
-              setTransitionOffset(0);
-            }, 300);
-          }
-        } else if (currentScrollY < initialTopRef.current - 10) {
-          if (isFloating) {
-            setIsFloating(false);
-            setTransitionOffset(0);
-          }
-        }
+      const currentScrollY = window.scrollY;
+      const sections = navItems.map(item => document.getElementById(item.id));
+      const scrollPosition = currentScrollY + 150;
 
-        // Update active section based on scroll position
-        const sections = navItems.map(item => document.getElementById(item.id));
-        const scrollPosition = currentScrollY + 150;
-
-        for (let i = sections.length - 1; i >= 0; i--) {
-          const section = sections[i];
-          if (section && section.offsetTop <= scrollPosition) {
-            setActiveSection(navItems[i].id);
-            break;
-          }
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(navItems[i].id);
+          break;
         }
-      });
+      }
     };
 
-    // Initial check
-    handleScroll();
-    
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [isFloating]);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -155,42 +92,13 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
   };
 
   return (
-    <>
-      {/* Spacer to maintain space when navbar becomes fixed */}
-      {isFloating && <div style={{ height: initialHeightRef.current }} />}
-      <motion.nav
-        ref={navRef}
-        animate={{
-          opacity: 1,
-          scale: 1,
-          x: isFloating ? `calc(-50% + ${transitionOffset}px)` : 0,
-        }}
-        transition={{ 
-          duration: 0.3, 
-          ease: [0.4, 0, 0.2, 1],
-          x: {
-            duration: 0.3,
-            ease: [0.4, 0, 0.2, 1]
-          }
-        }}
-        style={{
-          position: isFloating ? 'fixed' : 'relative',
-          top: isFloating ? '1rem' : 'auto',
-          left: isFloating ? '50%' : 'auto',
-          zIndex: isFloating ? 50 : 'auto',
-          margin: isFloating ? '0' : '1rem 0',
-          willChange: isFloating ? 'transform, position' : 'auto',
-        }}
-        className={`${isFloating ? '' : 'mx-auto'} z-50 ${
-          theme === 'dark' 
-            ? isFloating 
-              ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg' 
-              : 'bg-transparent border-white/10'
-            : isFloating
-            ? 'bg-white/90 backdrop-blur-md border-zinc-200 shadow-lg'
-            : 'bg-transparent border-zinc-200'
-        } border rounded-full px-4 py-2 block w-fit`}
-      >
+    <nav
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 ${
+        theme === 'dark' 
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg' 
+          : 'bg-white/90 backdrop-blur-md border-zinc-200 shadow-lg'
+      } border rounded-full px-4 py-2`}
+    >
       <div className="flex items-center gap-2">
         {navItems.map((item) => (
           <button
@@ -208,13 +116,6 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
           >
             <TablerIcon name={item.icon} className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{item.label}</span>
-            {activeSection === item.id && (
-              <motion.div
-                layoutId="activeSection"
-                className="absolute inset-0 rounded-full border-2 border-current opacity-20"
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            )}
           </button>
         ))}
         
@@ -226,18 +127,15 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
           theme === 'dark' ? 'bg-[#0f0f0f] border-white/10' : 'bg-white border-black/10'
         }`}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <AnimatePresence mode="wait">
-            <motion.span 
-              key={displayCount}
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 10, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className={`text-[10px] font-bold tracking-widest uppercase whitespace-nowrap ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}
-            >
-              {displayCount} VIEWS
-            </motion.span>
-          </AnimatePresence>
+          <motion.span 
+            key={displayCount}
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className={`text-[10px] font-bold tracking-widest uppercase whitespace-nowrap ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}
+          >
+            {displayCount} VIEWS
+          </motion.span>
         </div>
         
         {/* Theme Toggle */}
@@ -252,10 +150,8 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
           )}
         </button>
       </div>
-    </motion.nav>
-    </>
+    </nav>
   );
 };
 
 export default FloatingNav;
-
