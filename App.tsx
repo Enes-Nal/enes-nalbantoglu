@@ -13,6 +13,7 @@ import turkishFlag from './assets/turkey-square-national-flag-vector.jpg';
 import linkedinProfileImage from './assets/1754877573002.jpg';
 import githubProfileImage from './assets/77180172.jpg';
 import resumePdf from './assets/Mustafa Enes Nalbantoglu Resume Real.pdf?url';
+import whiteTulipLogo from './assets/logo-whitetulip-health-sq-logo.png';
 
 const PlusSymbol = ({ className }: { className?: string }) => (
   <div className={`absolute w-5 h-5 flex items-center justify-center font-bold z-20 pointer-events-none ${className}`}>
@@ -251,32 +252,78 @@ const App: React.FC = () => {
 
   const workExp = RESUME_DATA.find(c => c.id === 'work')?.items || [];
   
-  const projectsData = [
-    {
-      id: 'p1',
-      name: 'Resume Analyzer AI',
-      description: 'Developed an automated Resume Screening tool using NLP techniques to quantify alignment...',
-      stack: ['Python', 'NLP', 'TF-IDF', 'Cosine Similarity'],
-      lastUpdated: 'Dec 27, 2025',
-      link: '#'
-    },
-    {
-      id: 'p2',
-      name: 'Personal Portfolio Hub',
-      description: 'A high-aesthetic, utility-focused professional dashboard with clean animations...',
-      stack: ['React', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-      lastUpdated: 'Dec 21, 2025',
-      link: '#'
-    },
-    {
-      id: 'p3',
-      name: 'topaz.tools',
-      description: 'Internal utility tools for design and performance auditing...',
-      stack: ['TypeScript'],
-      lastUpdated: 'Dec 21, 2025',
-      link: '#'
-    }
-  ];
+  const [projectsData, setProjectsData] = useState<Array<{
+    id: string;
+    name: string;
+    description: string;
+    stack: string[];
+    lastUpdated: string;
+    link: string;
+  }>>([]);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+
+  // Fetch starred repositories from GitHub
+  useEffect(() => {
+    const fetchStarredRepos = async () => {
+      try {
+        setIsLoadingProjects(true);
+        // Fetch user's starred repositories
+        const starredResponse = await fetch('https://api.github.com/users/Enes-Nal/starred?per_page=100');
+        if (!starredResponse.ok) throw new Error('Failed to fetch starred repos');
+        
+        const starredRepos = await starredResponse.json();
+        
+        // Filter: only repos that are starred AND owned by Enes-Nal
+        const filteredRepos = starredRepos.filter((repo: any) => 
+          repo.owner.login === 'Enes-Nal'
+        );
+
+        // Fetch languages for each repo in parallel
+        const projectsWithLanguages = await Promise.all(
+          filteredRepos.map(async (repo: any) => {
+            try {
+              const languagesResponse = await fetch(repo.languages_url);
+              const languages = languagesResponse.ok ? await languagesResponse.json() : {};
+              const stack = Object.keys(languages).slice(0, 4);
+              
+              const updatedDate = new Date(repo.updated_at);
+              const lastUpdated = updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              
+              return {
+                id: repo.id.toString(),
+                name: repo.name,
+                description: repo.description || 'No description available',
+                stack: stack.length > 0 ? stack : ['Other'],
+                lastUpdated,
+                link: repo.html_url
+              };
+            } catch (error) {
+              const updatedDate = new Date(repo.updated_at);
+              const lastUpdated = updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              
+              return {
+                id: repo.id.toString(),
+                name: repo.name,
+                description: repo.description || 'No description available',
+                stack: ['Other'],
+                lastUpdated,
+                link: repo.html_url
+              };
+            }
+          })
+        );
+
+        setProjectsData(projectsWithLanguages);
+      } catch (error) {
+        console.error('Error fetching GitHub repositories:', error);
+        setProjectsData([]);
+      } finally {
+        setIsLoadingProjects(false);
+      }
+    };
+
+    fetchStarredRepos();
+  }, []);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -515,12 +562,18 @@ const App: React.FC = () => {
 
         {/* 5. Project Explorer Section */}
         <DraftingSection theme={theme} id="projects">
-          <ProjectExplorer 
-            theme={theme} 
-            projects={projectsData} 
-            onLinkHover={(name) => setHoveredSocial(name)}
-            onLinkLeave={() => setHoveredSocial(null)}
-          />
+          {isLoadingProjects ? (
+            <div className={`text-center py-8 ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              <div className="text-sm">Loading projects from GitHub...</div>
+            </div>
+          ) : (
+            <ProjectExplorer 
+              theme={theme} 
+              projects={projectsData} 
+              onLinkHover={(name) => setHoveredSocial(name)}
+              onLinkLeave={() => setHoveredSocial(null)}
+            />
+          )}
         </DraftingSection>
 
         {/* 6. Experiences Section */}
@@ -535,7 +588,11 @@ const App: React.FC = () => {
                       ? 'bg-[#121212] border-white/10 text-zinc-500 group-hover:text-white group-hover:bg-[#1a1a1a]' 
                       : 'bg-white border-black/10 text-zinc-400 group-hover:text-black group-hover:bg-zinc-100'
                    }`}>
-                      {exp.title[0]}
+                      {exp.id === 'work-3' ? (
+                        <img src={whiteTulipLogo} alt="White Tulip Health Foundation" className="w-full h-full object-cover" />
+                      ) : (
+                        exp.title[0]
+                      )}
                    </div>
                    
                    <div className="flex-1">
