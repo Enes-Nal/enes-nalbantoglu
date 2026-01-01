@@ -376,7 +376,7 @@ const App: React.FC = () => {
 
         {/* 1. Header Section */}
         <DraftingSection theme={theme} isHeader id="header">
-          <div className="w-full flex justify-center items-center">
+          <div className="w-full text-center">
             <FloatingNav theme={theme} toggleTheme={toggleTheme} displayCount={displayCount} />
           </div>
           <div className="flex flex-col md:flex-row items-start justify-between gap-3 mt-4">

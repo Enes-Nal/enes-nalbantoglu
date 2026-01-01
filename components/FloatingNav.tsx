@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+type ReactNode = React.ReactNode;
+
 interface FloatingNavProps {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
@@ -8,7 +10,7 @@ interface FloatingNavProps {
 }
 
 const TablerIcon = ({ name, className }: { name: string, className?: string }) => {
-  const icons: Record<string, JSX.Element> = {
+  const icons: Record<string, ReactNode> = {
     home: (
       <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -47,8 +49,12 @@ const TablerIcon = ({ name, className }: { name: string, className?: string }) =
 const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCount }) => {
   const [activeSection, setActiveSection] = useState('header');
   const [isFloating, setIsFloating] = useState(false);
+  const [transitionOffset, setTransitionOffset] = useState(0);
   const navRef = useRef<HTMLElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const initialTopRef = useRef<number>(0);
+  const initialHeightRef = useRef<number>(0);
+  const initialLeftRef = useRef<number>(0);
 
   const navItems = [
     { id: 'header', label: 'Home', icon: 'home' },
@@ -60,40 +66,78 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
   ];
 
   useEffect(() => {
+    // Store initial position and height on mount
+    if (wrapperRef.current && initialTopRef.current === 0) {
+      const rect = wrapperRef.current.getBoundingClientRect();
+      initialTopRef.current = rect.top + window.scrollY;
+      initialHeightRef.current = rect.height;
+    }
+  }, []);
+
+  // Update height when navbar content changes
+  useEffect(() => {
+    if (navRef.current && !isFloating) {
+      const rect = navRef.current.getBoundingClientRect();
+      initialHeightRef.current = rect.height;
+    }
+  }, [isFloating, displayCount]);
+
+  useEffect(() => {
+    let rafId: number;
+    
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      if (rafId) cancelAnimationFrame(rafId);
       
-      // Store initial position on first render
-      if (navRef.current && initialTopRef.current === 0 && !isFloating) {
-        const rect = navRef.current.getBoundingClientRect();
-        initialTopRef.current = rect.top + currentScrollY;
-      }
-      
-      // Make navbar floating after scrolling past its initial position
-      if (initialTopRef.current > 0 && currentScrollY > initialTopRef.current - 20) {
-        setIsFloating(true);
-      } else if (currentScrollY <= initialTopRef.current - 20) {
-        setIsFloating(false);
-      }
-
-      // Update active section based on scroll position
-      const sections = navItems.map(item => document.getElementById(item.id));
-      const scrollPosition = currentScrollY + 150;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(navItems[i].id);
-          break;
+      rafId = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        
+        // Make navbar floating after scrolling past its initial position
+        if (initialTopRef.current > 0 && currentScrollY >= initialTopRef.current - 10) {
+          if (!isFloating && navRef.current) {
+            // Calculate current visual position to maintain continuity
+            const rect = navRef.current.getBoundingClientRect();
+            const centerX = window.innerWidth / 2;
+            const currentCenterX = rect.left + rect.width / 2;
+            const offset = currentCenterX - centerX;
+            
+            // Set offset to maintain visual position
+            setTransitionOffset(offset);
+            setIsFloating(true);
+            
+            // Smoothly transition offset to 0 (centered) after transition completes
+            setTimeout(() => {
+              setTransitionOffset(0);
+            }, 300);
+          }
+        } else if (currentScrollY < initialTopRef.current - 10) {
+          if (isFloating) {
+            setIsFloating(false);
+            setTransitionOffset(0);
+          }
         }
-      }
+
+        // Update active section based on scroll position
+        const sections = navItems.map(item => document.getElementById(item.id));
+        const scrollPosition = currentScrollY + 150;
+
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const section = sections[i];
+          if (section && section.offsetTop <= scrollPosition) {
+            setActiveSection(navItems[i].id);
+            break;
+          }
+        }
+      });
     };
 
     // Initial check
     handleScroll();
     
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [isFloating]);
 
   const scrollToSection = (sectionId: string) => {
@@ -111,23 +155,42 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
   };
 
   return (
-    <motion.nav
-      ref={navRef}
-      animate={{
-        opacity: 1,
-        scale: 1,
-      }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`${isFloating ? 'fixed top-4 left-1/2 -translate-x-1/2 z-50' : 'relative my-4'} ${
-        theme === 'dark' 
-          ? isFloating 
-            ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg' 
-            : 'bg-transparent border-white/10'
-          : isFloating
-          ? 'bg-white/90 backdrop-blur-md border-zinc-200 shadow-lg'
-          : 'bg-transparent border-zinc-200'
-      } border rounded-full px-4 py-2 inline-block`}
-    >
+    <>
+      {/* Spacer to maintain space when navbar becomes fixed */}
+      {isFloating && <div style={{ height: initialHeightRef.current }} />}
+      <motion.nav
+        ref={navRef}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          x: isFloating ? `calc(-50% + ${transitionOffset}px)` : 0,
+        }}
+        transition={{ 
+          duration: 0.3, 
+          ease: [0.4, 0, 0.2, 1],
+          x: {
+            duration: 0.3,
+            ease: [0.4, 0, 0.2, 1]
+          }
+        }}
+        style={{
+          position: isFloating ? 'fixed' : 'relative',
+          top: isFloating ? '1rem' : 'auto',
+          left: isFloating ? '50%' : 'auto',
+          zIndex: isFloating ? 50 : 'auto',
+          margin: isFloating ? '0' : '1rem 0',
+          willChange: isFloating ? 'transform, position' : 'auto',
+        }}
+        className={`${isFloating ? '' : 'mx-auto'} z-50 ${
+          theme === 'dark' 
+            ? isFloating 
+              ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg' 
+              : 'bg-transparent border-white/10'
+            : isFloating
+            ? 'bg-white/90 backdrop-blur-md border-zinc-200 shadow-lg'
+            : 'bg-transparent border-zinc-200'
+        } border rounded-full px-4 py-2 block w-fit`}
+      >
       <div className="flex items-center gap-2">
         {navItems.map((item) => (
           <button
@@ -159,10 +222,10 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
         <div className={`h-6 w-px ${theme === 'dark' ? 'bg-white/10' : 'bg-zinc-300'}`} />
         
         {/* Views Counter */}
-        <div className={`flex items-center gap-2 px-3 py-1.5 border rounded-full transition-colors duration-500 ${
+        <div className={`flex items-center gap-2 px-3 py-1.5 border rounded-full transition-colors duration-500 whitespace-nowrap ${
           theme === 'dark' ? 'bg-[#0f0f0f] border-white/10' : 'bg-white border-black/10'
         }`}>
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
           <AnimatePresence mode="wait">
             <motion.span 
               key={displayCount}
@@ -170,7 +233,7 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 10, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`text-[10px] font-bold tracking-widest uppercase ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}
+              className={`text-[10px] font-bold tracking-widest uppercase whitespace-nowrap ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}
             >
               {displayCount} VIEWS
             </motion.span>
@@ -190,6 +253,7 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
         </button>
       </div>
     </motion.nav>
+    </>
   );
 };
 
