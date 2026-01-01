@@ -14,6 +14,7 @@ import linkedinProfileImage from './assets/1754877573002.jpg';
 import githubProfileImage from './assets/77180172.jpg';
 import resumePdf from './assets/Mustafa Enes Nalbantoglu Resume Real.pdf?url';
 import whiteTulipLogo from './assets/logo-whitetulip-health-sq-logo.png';
+import borderlessTutorsLogo from './assets/PeNBj3wn_400x400.jpg';
 
 const PlusSymbol = ({ className }: { className?: string }) => (
   <div className={`absolute w-5 h-5 flex items-center justify-center font-bold z-20 pointer-events-none ${className}`}>
@@ -590,6 +591,8 @@ const App: React.FC = () => {
                    }`}>
                       {exp.id === 'work-3' ? (
                         <img src={whiteTulipLogo} alt="White Tulip Health Foundation" className="w-7 h-7 object-contain" />
+                      ) : exp.id === 'work-2' ? (
+                        <img src={borderlessTutorsLogo} alt="Borderless Tutors" className="w-7 h-7 object-contain" />
                       ) : (
                         exp.title[0]
                       )}
