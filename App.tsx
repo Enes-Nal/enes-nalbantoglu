@@ -100,6 +100,113 @@ const ASUTrident = () => (
   </a>
 );
 
+const getTechColors = (skill: string, theme: 'light' | 'dark') => {
+  const colorMap: Record<string, { bg: string; border: string; text: string; icon: string }> = {
+    'React': {
+      bg: theme === 'dark' ? 'bg-[#61DAFB]/20' : 'bg-[#61DAFB]/15',
+      border: 'border-[#61DAFB]/40',
+      text: theme === 'dark' ? 'text-[#61DAFB]' : 'text-[#0284C7]',
+      icon: theme === 'dark' ? '#61DAFB' : '#0284C7'
+    },
+    'Next-js': {
+      bg: theme === 'dark' ? 'bg-white/10' : 'bg-black/10',
+      border: theme === 'dark' ? 'border-white/30' : 'border-black/30',
+      text: theme === 'dark' ? 'text-white' : 'text-black',
+      icon: theme === 'dark' ? '#ffffff' : '#000000'
+    },
+    'Python': {
+      bg: theme === 'dark' ? 'bg-[#3776AB]/20' : 'bg-[#3776AB]/15',
+      border: 'border-[#3776AB]/40',
+      text: 'text-[#3776AB]',
+      icon: '#3776AB'
+    },
+    'Figma': {
+      bg: theme === 'dark' ? 'bg-[#F24E1E]/20' : 'bg-[#F24E1E]/15',
+      border: 'border-[#F24E1E]/40',
+      text: 'text-[#F24E1E]',
+      icon: '#F24E1E'
+    },
+    'Javascript': {
+      bg: theme === 'dark' ? 'bg-[#F7DF1E]/20' : 'bg-[#F7DF1E]/20',
+      border: 'border-[#F7DF1E]/40',
+      text: theme === 'dark' ? 'text-[#F7DF1E]' : 'text-[#B45309]',
+      icon: theme === 'dark' ? '#F7DF1E' : '#B45309'
+    },
+    'HTML/CSS': {
+      bg: theme === 'dark' ? 'bg-[#E34F26]/20' : 'bg-[#E34F26]/15',
+      border: 'border-[#E34F26]/40',
+      text: 'text-[#E34F26]',
+      icon: '#E34F26'
+    },
+    'Tailwindcss': {
+      bg: theme === 'dark' ? 'bg-[#06B6D4]/20' : 'bg-[#06B6D4]/15',
+      border: 'border-[#06B6D4]/40',
+      text: theme === 'dark' ? 'text-[#06B6D4]' : 'text-[#0891B2]',
+      icon: theme === 'dark' ? '#06B6D4' : '#0891B2'
+    },
+  };
+
+  return colorMap[skill] || {
+    bg: theme === 'dark' ? 'bg-zinc-900/50' : 'bg-zinc-50',
+    border: theme === 'dark' ? 'border-zinc-700' : 'border-zinc-300',
+    text: theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600',
+    icon: theme === 'dark' ? '#a1a1aa' : '#52525b'
+  };
+};
+
+const TechIcon = ({ skill, color }: { skill: string, color?: string }) => {
+  const iconColor = color || 'currentColor';
+  const iconMap: Record<string, React.ReactNode> = {
+    'Javascript': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 7.001-.84.028-.09.24-.705.315-1.365.063-.606.025-1.14-.198-1.615z"/>
+      </svg>
+    ),
+    'HTML/CSS': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622h10.125l-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.955-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z"/>
+      </svg>
+    ),
+    'Next-js': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M9 15v-6l7.745 10.65a9 9 0 1 1 2.255 -1.993" />
+        <path d="M15 12v-3" />
+      </svg>
+    ),
+    'Tailwindcss': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.74 1.91 1.35.98 1 2.12 2.15 4.59 2.15 2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.74-1.91-1.35C15.61 7.15 14.47 6 12 6zm-5 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.74 1.91 1.35.98 1 2.12 2.15 4.59 2.15 2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.74-1.91-1.35C10.61 13.15 9.47 12 7 12z"/>
+      </svg>
+    ),
+    'React': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="1.5">
+        <ellipse cx="12" cy="12" rx="11" ry="4.2" fill="none"/>
+        <ellipse cx="12" cy="12" rx="11" ry="4.2" fill="none" transform="rotate(60 12 12)"/>
+        <ellipse cx="12" cy="12" rx="11" ry="4.2" fill="none" transform="rotate(120 12 12)"/>
+        <circle cx="12" cy="12" r="2" fill={iconColor}/>
+      </svg>
+    ),
+    'Python': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M14.5 2.5c1.5 0 3 1.5 3 3v2.5h-2.5v-2.5c0-.5-.5-1-1-1h-2.5c-1.5 0-3 1.5-3 3v2.5H5.5v-2.5c0-1.5 1.5-3 3-3h6zm-9 9c-1.5 0-3 1.5-3 3v2.5c0 1.5 1.5 3 3 3h2.5v-2.5c0-.5.5-1 1-1h2.5c1.5 0 3-1.5 3-3v-2.5h2.5v2.5c0 1.5-1.5 3-3 3h-6c-1.5 0-3-1.5-3-3v-2.5h2.5z"/>
+      </svg>
+    ),
+    'C++': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M22.394 6c-.167-.29-.398-.543-.652-.69L12.926.22c-.509-.294-1.34-.294-1.848 0L1.26 5.31c-.509.293-.923 1.013-.923 1.6v10.18c0 .294.104.62.271.91.167.29.398.543.652.69l8.816 5.09c.509.293 1.34.293 1.848 0l8.816-5.09c.509-.293.923-1.013.923-1.6V7.21c0-.294-.104-.62-.271-.91zM12 19.11c-3.92 0-7.109-3.19-7.109-7.11S8.08 4.89 12 4.89c.424 0 .841.041 1.247.115v1.658c-.406-.051-.82-.077-1.247.077-2.99 0-5.418 2.433-5.418 5.42 0 2.99 2.428 5.42 5.418 5.42 2.99 0 5.418-2.43 5.418-5.42 0-.504-.069-.99-.2-1.458l1.558-.359c.16.57.242 1.163.242 1.817 0 3.92-3.189 7.11-7.109 7.11zm5.33-8.232l-1.335 1.335-1.335-1.335-1.132 1.133 1.335 1.334-1.335 1.335 1.132 1.132 1.335-1.335 1.335 1.335 1.133-1.132-1.336-1.335 1.336-1.334-1.133-1.133z"/>
+      </svg>
+    ),
+    'C': (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill={iconColor}>
+        <path d="M16.592 9.196s-.354 3.854-3.547 3.854c-3.194 0-3.194-3.854-3.194-3.854 0-3.854 3.194-3.854 3.194-3.854 3.193 0 3.547 3.854 3.547 3.854zm-5.592 0s0-2.714 2.382-2.714c2.383 0 2.383 2.714 2.383 2.714 0 2.714-2.383 2.714-2.383 2.714-2.382 0-2.382-2.714-2.382-2.714z"/>
+      </svg>
+    ),
+  };
+
+  return iconMap[skill] || null;
+};
+
 const InfoRow = ({ icon, text, theme, secondaryText, secondaryIcon }: { icon: React.ReactNode, text: string, theme: 'light' | 'dark', secondaryText?: string, secondaryIcon?: React.ReactNode }) => {
   const parts = text.split('Arizona State University');
   const renderedText = parts.length > 1 ? (
@@ -144,6 +251,17 @@ const App: React.FC = () => {
   const [isLoadingViews, setIsLoadingViews] = useState(true);
   const [isResumeViewOpen, setIsResumeViewOpen] = useState(false);
   
+  // Rotating subtitle text
+  const subtitleTexts = [
+    'Software Engineer & CS Student',
+    'Creating with code. Small details matter.',
+    'Open Source Contributor',
+    'Design Engineer',
+    'Full-Stack Developer',
+    'Problem Solver'
+  ];
+  const [currentSubtitleIndex, setCurrentSubtitleIndex] = useState(0);
+
   // Real view counter using CountAPI
   useEffect(() => {
     const counterKey = 'mustafa-enes-portfolio-views';
@@ -246,6 +364,14 @@ const App: React.FC = () => {
     const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // Rotate subtitle text
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSubtitleIndex((prev) => (prev + 1) % subtitleTexts.length);
+    }, 3000); // Change every 3 seconds
+    return () => clearInterval(interval);
+  }, [subtitleTexts.length]);
   
   const handleViewResume = () => {
     setIsResumeViewOpen(true);
@@ -427,18 +553,30 @@ const App: React.FC = () => {
             <div className="flex flex-col md:flex-row items-start justify-between gap-3">
             <div className="flex gap-4 items-center">
               <div className="relative">
-                <div className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border shrink-0 transition-colors duration-500 ${
+                <div className={`w-16 h-16 md:w-24 md:h-24 rounded-2xl overflow-hidden border shrink-0 transition-colors duration-500 ${
                   theme === 'dark' ? 'bg-[#121212] border-white/10' : 'bg-white border-zinc-200'
                 }`}>
                    <img src={profileImage} alt="profile" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -top-2 -right-2 w-6 h-6 md:w-7 md:h-7 select-none">
-                  <img src={turkishFlag} alt="Turkey flag" className="w-full h-full object-cover rounded-sm" style={{ transform: 'translateX(-2px)' }} />
+                  <img src={turkishFlag} alt="Turkey flag" className="w-full h-full object-cover rounded-md" style={{ transform: 'translateX(-2px)' }} />
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-0.5 text-inherit">Mustafa Enes Nalbantoglu</h1>
-                <p className={`text-sm md:text-base font-light italic ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>Software Engineer & CS Student</p>
+                <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-0.5 text-inherit" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>Mustafa Enes Nalbantoglu</h1>
+                <p className={`text-sm md:text-base font-light ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'} min-h-[1.5rem] flex items-center`} style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={currentSubtitleIndex}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {subtitleTexts[currentSubtitleIndex]}
+                    </motion.span>
+                  </AnimatePresence>
+                </p>
               </div>
             </div>
           </div>
@@ -455,8 +593,8 @@ const App: React.FC = () => {
             <div className={`text-sm md:text-[15px] leading-relaxed font-light ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
               <p className="mb-3 flex flex-wrap items-center gap-1">
                 I build interactive web apps using{' '}
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${theme === 'dark' ? 'bg-zinc-900/50 border-zinc-700' : 'bg-zinc-50 border-zinc-300'}`}>
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${getTechColors('React', theme).bg} ${getTechColors('React', theme).border}`}>
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={getTechColors('React', theme).icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M6.306 8.711c-2.602 .723 -4.306 1.926 -4.306 3.289c0 2.21 4.477 4 10 4c.773 0 1.526 -.035 2.248 -.102" />
                     <path d="M17.692 15.289c2.603 -.722 4.308 -1.926 4.308 -3.289c0 -2.21 -4.477 -4 -10 -4c-.773 0 -1.526 .035 -2.25 .102" />
@@ -466,18 +604,18 @@ const App: React.FC = () => {
                     <path d="M12 18.574c1.926 1.893 3.821 2.768 5 2.086c1.913 -1.104 1.226 -5.877 -1.536 -10.66c-.375 -.65 -.78 -1.283 -1.212 -1.897" />
                     <path d="M11.5 12.866a1 1 0 1 0 1 -1.732a1 1 0 0 0 -1 1.732z" />
                   </svg>
-                  <span className="text-xs">React</span>
+                  <span className={`text-xs ${getTechColors('React', theme).text}`}>React</span>
                 </span>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${theme === 'dark' ? 'bg-zinc-900/50 border-zinc-700' : 'bg-zinc-50 border-zinc-300'}`}>
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${getTechColors('Next-js', theme).bg} ${getTechColors('Next-js', theme).border}`}>
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={getTechColors('Next-js', theme).icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M9 15v-6l7.745 10.65a9 9 0 1 1 2.255 -1.993" />
                     <path d="M15 12v-3" />
                   </svg>
-                  <span className="text-xs">Next.js</span>
+                  <span className={`text-xs ${getTechColors('Next-js', theme).text}`}>Next.js</span>
                 </span>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${theme === 'dark' ? 'bg-zinc-900/50 border-zinc-700' : 'bg-zinc-50 border-zinc-300'}`}>
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${getTechColors('Python', theme).bg} ${getTechColors('Python', theme).border}`}>
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={getTechColors('Python', theme).icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3" />
                     <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3" />
@@ -485,17 +623,17 @@ const App: React.FC = () => {
                     <path d="M11 6l0 .01" />
                     <path d="M13 18l0 .01" />
                   </svg>
-                  <span className="text-xs">Python</span>
+                  <span className={`text-xs ${getTechColors('Python', theme).text}`}>Python</span>
                 </span>
                 {' '}and{' '}
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${theme === 'dark' ? 'bg-zinc-900/50 border-zinc-700' : 'bg-zinc-50 border-zinc-300'}`}>
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-dashed ${getTechColors('Figma', theme).bg} ${getTechColors('Figma', theme).border}`}>
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke={getTechColors('Figma', theme).icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M15 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
                     <path d="M6 3m0 3a3 3 0 0 1 3 -3h6a3 3 0 0 1 3 3v0a3 3 0 0 1 -3 3h-6a3 3 0 0 1 -3 -3z" />
                     <path d="M9 9a3 3 0 0 0 0 6h3m-3 0a3 3 0 1 0 3 3v-15" />
                   </svg>
-                  <span className="text-xs">Figma</span>
+                  <span className={`text-xs ${getTechColors('Figma', theme).text}`}>Figma</span>
                 </span>
               </p>
             </div>
@@ -510,13 +648,16 @@ const App: React.FC = () => {
             >
               View resume
             </button>
-            <button className={`px-5 py-2 border text-xs font-medium rounded-xl transition-all ${
-              theme === 'dark' 
-                ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818]' 
-                : 'bg-white border-black/10 text-black hover:bg-zinc-50'
-            }`}>
+            <a 
+              href="mailto:mustafaenwork@gmail.com"
+              className={`px-5 py-2 border text-xs font-medium rounded-xl transition-all inline-block ${
+                theme === 'dark' 
+                  ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818]' 
+                  : 'bg-white border-black/10 text-black hover:bg-zinc-50'
+              }`}
+            >
               Send an email
-            </button>
+            </a>
           </div>
         </DraftingSection>
 
@@ -622,15 +763,15 @@ const App: React.FC = () => {
                       </ul>
                       
                       <div className="flex flex-wrap gap-2">
-                        {TECHNICAL_SKILLS.slice(0, 5).map(skill => (
-                          <span key={skill} className={`px-2 py-0.5 border rounded text-[8px] uppercase tracking-tighter transition-colors ${
-                            theme === 'dark' 
-                              ? 'bg-[#111111] border-white/5 text-zinc-500 hover:text-zinc-300' 
-                              : 'bg-white border-black/5 text-zinc-400 hover:text-zinc-600'
-                          }`}>
-                            {skill}
-                          </span>
-                        ))}
+                        {TECHNICAL_SKILLS.slice(0, 5).map(skill => {
+                          const colors = getTechColors(skill, theme);
+                          return (
+                            <span key={skill} className={`inline-flex items-center gap-1 px-2 py-0.5 border rounded text-[8px] uppercase tracking-tighter transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}>
+                              <TechIcon skill={skill} color={colors.icon} />
+                              {skill}
+                            </span>
+                          );
+                        })}
                       </div>
                    </div>
                 </div>
