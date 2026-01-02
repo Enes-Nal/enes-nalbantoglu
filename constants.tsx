@@ -31,7 +31,8 @@ export const RESUME_DATA: KanbanColumn[] = [
           'Built a digitized database tool to track book conditions and inventory levels.',
           'Designed a logical sorting system for inventory logistics improving speed and accuracy.',
           'Automated shipping label workflows integrating inventory data with delivery templates.'
-        ]
+        ],
+        techStack: ['Python', 'Javascript']
       },
       {
         id: 'work-2',
@@ -43,7 +44,8 @@ export const RESUME_DATA: KanbanColumn[] = [
           'Co-led launch of educational initiative for free tutoring in underserved communities.',
           'Played key role in strategic planning, branding, and operational framework design.',
           'Created scalable documentation and workflows for program expansion.'
-        ]
+        ],
+        techStack: ['React', 'Next-js', 'Tailwindcss', 'Javascript', 'HTML/CSS']
       },
       {
         id: 'work-3',
@@ -54,7 +56,8 @@ export const RESUME_DATA: KanbanColumn[] = [
         description: [
           'Created new web pages and developed content related to health webinars.',
           'Conducted website audits to identify and resolve bugs, improving UX.'
-        ]
+        ],
+        techStack: ['HTML/CSS', 'Javascript', 'React']
       }
     ]
   },
@@ -65,12 +68,14 @@ export const RESUME_DATA: KanbanColumn[] = [
       {
         id: 'proj-1',
         title: 'Resume Analyzer AI',
-        subtitle: 'Python, NLP, Cosine Similarity',
+        subtitle: 'React, TypeScript, Gemini AI',
         description: [
-          'Automated Resume Screening tool using NLP techniques to quantify alignment.',
-          'Implemented Cosine Similarity and TF-IDF for precise match scores.',
-          'Streamlined data extraction from PDF/DOCX for recruiter efficiency.'
+          'Web application that helps job seekers understand resume-job description alignment using AI analysis.',
+          'Built with React and TypeScript for a type-safe, maintainable codebase with efficient development workflow.',
+          'Integrated Gemini AI API to provide intelligent match scores, skill alignment analysis, and actionable improvement suggestions.',
+          'Features resume insights, red flags detection, and experience relevance feedback to optimize resume performance.'
         ],
+        techStack: ['React', 'TypeScript', 'HTML/CSS', 'AI'],
         links: [
           { label: 'GitHub', url: 'https://github.com/Enes-Nal/Resume-Match' },
           { label: 'Live Demo', url: 'https://resume-match-ruddy.vercel.app/' }

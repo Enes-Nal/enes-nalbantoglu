@@ -25,10 +25,10 @@ const PlusSymbol = ({ className }: { className?: string }) => (
 const HatchedDivider = ({ theme }: { theme: 'light' | 'dark' }) => {
   const stripeColor = theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)';
   const borderColor = theme === 'dark' ? 'border-zinc-800' : 'border-zinc-300';
-  
+
   return (
     <div className="relative w-full overflow-hidden">
-      <div 
+      <div
         className={`absolute left-0 right-0 h-8 border-b border-dashed ${borderColor}`}
         style={{
           backgroundImage: `linear-gradient(45deg, ${stripeColor} 25%, transparent 25%, transparent 50%, ${stripeColor} 50%, ${stripeColor} 75%, transparent 75%, transparent)`,
@@ -42,14 +42,14 @@ const HatchedDivider = ({ theme }: { theme: 'light' | 'dark' }) => {
   );
 };
 
-const DraftingSection = ({ 
-  children, 
-  theme, 
+const DraftingSection = ({
+  children,
+  theme,
   last = false,
   isHeader = false,
   id
-}: { 
-  children?: React.ReactNode; 
+}: {
+  children?: React.ReactNode;
   theme: 'light' | 'dark';
   last?: boolean;
   isHeader?: boolean;
@@ -84,15 +84,15 @@ const InfoIcon = ({ icon, theme }: { icon: React.ReactNode, theme: 'light' | 'da
 };
 
 const ASUTrident = () => (
-  <a 
-    href="https://asu.edu" 
-    target="_blank" 
-    rel="noopener noreferrer" 
+  <a
+    href="https://asu.edu"
+    target="_blank"
+    rel="noopener noreferrer"
     className="inline-flex items-center align-middle mr-1"
   >
-    <motion.img 
-      src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Arizona_State_Sun_Devils_logo.svg/1200px-Arizona_State_Sun_Devils_logo.svg.png" 
-      alt="ASU Trident" 
+    <motion.img
+      src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Arizona_State_Sun_Devils_logo.svg/1200px-Arizona_State_Sun_Devils_logo.svg.png"
+      alt="ASU Trident"
       className="h-[1.5em] w-auto"
       whileHover={{ rotate: 15, scale: 1.1 }}
       transition={{ type: 'spring', stiffness: 300 }}
@@ -143,6 +143,18 @@ const getTechColors = (skill: string, theme: 'light' | 'dark') => {
       border: 'border-[#06B6D4]/40',
       text: theme === 'dark' ? 'text-[#06B6D4]' : 'text-[#0891B2]',
       icon: theme === 'dark' ? '#06B6D4' : '#0891B2'
+    },
+    'TypeScript': {
+      bg: theme === 'dark' ? 'bg-[#3178C6]/20' : 'bg-[#3178C6]/15',
+      border: 'border-[#3178C6]/40',
+      text: 'text-[#3178C6]',
+      icon: '#3178C6'
+    },
+    'AI': {
+      bg: theme === 'dark' ? 'bg-[#9333EA]/20' : 'bg-[#9333EA]/15',
+      border: 'border-[#9333EA]/40',
+      text: 'text-[#9333EA]',
+      icon: theme === 'dark' ? '#A855F7' : '#9333EA'
     },
   };
 
@@ -250,7 +262,7 @@ const App: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(124);
   const [isLoadingViews, setIsLoadingViews] = useState(true);
   const [isResumeViewOpen, setIsResumeViewOpen] = useState(false);
-  
+
   // Rotating subtitle text
   const subtitleTexts = [
     'Software Engineer & CS Student',
@@ -265,57 +277,57 @@ const App: React.FC = () => {
   // Real view counter using CountAPI
   useEffect(() => {
     const counterKey = 'mustafa-enes-portfolio-views';
-    
+
     const fetchAndIncrementViews = async () => {
       try {
         // Get current count
         const getResponse = await fetch(`https://api.countapi.xyz/get/portfolio/${counterKey}`);
         const getData = await getResponse.json();
         const currentCount = getData.value || 124;
-        
+
         // Check if we've already incremented this session
         const sessionKey = `viewed_${counterKey}`;
         const hasViewed = sessionStorage.getItem(sessionKey);
-        
+
         if (!hasViewed) {
           // Increment the count
           const hitResponse = await fetch(`https://api.countapi.xyz/hit/portfolio/${counterKey}`);
           const hitData = await hitResponse.json();
           const newCount = hitData.value || currentCount + 1;
-          
+
           // Mark as viewed for this session
           sessionStorage.setItem(sessionKey, 'true');
-          
+
           setViewCount(newCount);
           setDisplayCount(currentCount);
-          
+
           // Animate to new count
           const duration = 1000;
           const startTime = Date.now();
           const startValue = currentCount;
           const endValue = newCount;
-          
+
           const animate = () => {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
             const current = Math.floor(startValue + (endValue - startValue) * easeOutQuart);
             setDisplayCount(current);
-            
+
             if (progress < 1) {
               requestAnimationFrame(animate);
             } else {
               setDisplayCount(endValue);
             }
           };
-          
+
           requestAnimationFrame(animate);
         } else {
           // Already viewed this session, just display current count
           setViewCount(currentCount);
           setDisplayCount(currentCount);
         }
-        
+
         setIsLoadingViews(false);
       } catch (error) {
         console.error('Error fetching view count:', error);
@@ -326,35 +338,35 @@ const App: React.FC = () => {
         setViewCount(newCount);
         setDisplayCount(initialCount);
         localStorage.setItem('viewCount', newCount.toString());
-        
+
         // Animate to new count
         const duration = 1000;
         const startTime = Date.now();
         const startValue = initialCount;
         const endValue = newCount;
-        
+
         const animate = () => {
           const elapsed = Date.now() - startTime;
           const progress = Math.min(elapsed / duration, 1);
           const easeOutQuart = 1 - Math.pow(1 - progress, 4);
           const current = Math.floor(startValue + (endValue - startValue) * easeOutQuart);
           setDisplayCount(current);
-          
+
           if (progress < 1) {
             requestAnimationFrame(animate);
           } else {
             setDisplayCount(endValue);
           }
         };
-        
+
         requestAnimationFrame(animate);
         setIsLoadingViews(false);
       }
     };
-    
+
     fetchAndIncrementViews();
   }, []);
-  
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -372,13 +384,13 @@ const App: React.FC = () => {
     }, 3000); // Change every 3 seconds
     return () => clearInterval(interval);
   }, [subtitleTexts.length]);
-  
+
   const handleViewResume = () => {
     setIsResumeViewOpen(true);
   };
 
   const workExp = RESUME_DATA.find(c => c.id === 'work')?.items || [];
-  
+
   const [projectsData, setProjectsData] = useState<Array<{
     id: string;
     name: string;
@@ -397,11 +409,11 @@ const App: React.FC = () => {
         // Fetch user's starred repositories
         const starredResponse = await fetch('https://api.github.com/users/Enes-Nal/starred?per_page=100');
         if (!starredResponse.ok) throw new Error('Failed to fetch starred repos');
-        
+
         const starredRepos = await starredResponse.json();
-        
+
         // Filter: only repos that are starred AND owned by Enes-Nal
-        const filteredRepos = starredRepos.filter((repo: any) => 
+        const filteredRepos = starredRepos.filter((repo: any) =>
           repo.owner.login === 'Enes-Nal'
         );
 
@@ -411,11 +423,24 @@ const App: React.FC = () => {
             try {
               const languagesResponse = await fetch(repo.languages_url);
               const languages = languagesResponse.ok ? await languagesResponse.json() : {};
-              const stack = Object.keys(languages).slice(0, 4);
-              
+              let stack = Object.keys(languages).slice(0, 4);
+
+              // Add AI to Resume-Match project stack (take up to 3 languages + AI to ensure AI is shown)
+              const repoNameLower = repo.name.toLowerCase();
+              const repoUrlLower = repo.html_url?.toLowerCase() || '';
+              const isResumeMatch = repoNameLower === 'resume-match' ||
+                                   repoNameLower.includes('resume-match') ||
+                                   repoNameLower.includes('resumematch') ||
+                                   repoUrlLower.includes('resume-match');
+
+              if (isResumeMatch) {
+                const languageKeys = Object.keys(languages);
+                stack = [...languageKeys.slice(0, 3), 'AI'];
+              }
+
               const updatedDate = new Date(repo.updated_at);
               const lastUpdated = updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-              
+
               return {
                 id: repo.id.toString(),
                 name: repo.name,
@@ -427,7 +452,7 @@ const App: React.FC = () => {
             } catch (error) {
               const updatedDate = new Date(repo.updated_at);
               const lastUpdated = updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-              
+
               return {
                 id: repo.id.toString(),
                 name: repo.name,
@@ -487,9 +512,9 @@ const App: React.FC = () => {
   }, []);
 
   const socialLinks = useMemo(() => [
-    { 
-      name: 'GitHub', 
-      icon: 'GITHUB', 
+    {
+      name: 'GitHub',
+      icon: 'GITHUB',
       handle: '@Enes-Nal',
       url: 'https://github.com/Enes-Nal',
       profileImage: githubProfileImage,
@@ -498,9 +523,9 @@ const App: React.FC = () => {
       followers: socialData.GitHub?.followers?.toString() || '0',
       bannerImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800'
     },
-    { 
-      name: 'LinkedIn', 
-      icon: 'LINKEDIN', 
+    {
+      name: 'LinkedIn',
+      icon: 'LINKEDIN',
       handle: '@mustafa-enes',
       url: 'https://www.linkedin.com/in/mustafa-enes-nalbantoglu/',
       profileImage: linkedinProfileImage,
@@ -509,9 +534,9 @@ const App: React.FC = () => {
       followers: '1.2K+',
       bannerImage: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=800'
     },
-    { 
-      name: 'LeetCode', 
-      icon: 'LEETCODE', 
+    {
+      name: 'LeetCode',
+      icon: 'LEETCODE',
       handle: '@Enes-Nal',
       url: 'https://leetcode.com/u/Enes-Nal/',
       profileImage: profileImage,
@@ -540,7 +565,7 @@ const App: React.FC = () => {
     }`}>
 
       <main className={`relative z-10 max-w-4xl mx-auto border-l border-r border-dashed mb-12 ${borderColor}`}>
-        
+
         {/* Intersection Crosshairs */}
         <PlusSymbol className={`-top-[10px] -left-[10px] ${crosshairColor}`} />
         <PlusSymbol className={`-top-[10px] -right-[10px] ${crosshairColor}`} />
@@ -589,7 +614,7 @@ const App: React.FC = () => {
             <p className={`text-sm md:text-[15px] leading-relaxed font-light ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
               I am a Computer Science student at <span className="font-medium whitespace-nowrap"><ASUTrident /><span className="text-[#f6ad55]">Arizona State University</span></span> dedicated to building precision-engineered software.
             </p>
-            
+
             <div className={`text-sm md:text-[15px] leading-relaxed font-light ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
               <p className="mb-3 flex flex-wrap items-center gap-1">
                 I build interactive web apps using{' '}
@@ -638,9 +663,9 @@ const App: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="flex flex-wrap gap-3">
-            <button 
+            <button
               onClick={handleViewResume}
               className={`px-5 py-2 text-xs font-semibold rounded-xl transition-all ${
                 theme === 'dark' ? 'bg-white text-black hover:bg-zinc-200' : 'bg-black text-white hover:bg-zinc-800'
@@ -648,11 +673,11 @@ const App: React.FC = () => {
             >
               View resume
             </button>
-            <a 
+            <a
               href="mailto:mustafaenwork@gmail.com"
               className={`px-5 py-2 border text-xs font-medium rounded-xl transition-all inline-block ${
-                theme === 'dark' 
-                  ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818]' 
+                theme === 'dark'
+                  ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818]'
                   : 'bg-white border-black/10 text-black hover:bg-zinc-50'
               }`}
             >
@@ -666,7 +691,7 @@ const App: React.FC = () => {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             {socialLinks.map((social) => (
               <div key={social.name} className="relative group">
-                <a 
+                <a
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -682,15 +707,15 @@ const App: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                   </svg>
                 </a>
-                <SocialHoverCard 
-                  isVisible={hoveredSocial === social.name} 
-                  platform={social.name} 
+                <SocialHoverCard
+                  isVisible={hoveredSocial === social.name}
+                  platform={social.name}
                   handle={social.handle}
                   profileImage={social.profileImage}
                   bio={social.bio}
                   following={social.following}
                   followers={social.followers}
-                  theme={theme} 
+                  theme={theme}
                 />
               </div>
             ))}
@@ -709,9 +734,9 @@ const App: React.FC = () => {
               <div className="text-sm">Loading projects from GitHub...</div>
             </div>
           ) : (
-            <ProjectExplorer 
-              theme={theme} 
-              projects={projectsData} 
+            <ProjectExplorer
+              theme={theme}
+              projects={projectsData}
               onLinkHover={(name) => setHoveredSocial(name)}
               onLinkLeave={() => setHoveredSocial(null)}
             />
@@ -726,8 +751,8 @@ const App: React.FC = () => {
               <div key={exp.id} className="relative group">
                 <div className="flex flex-col md:flex-row gap-5 items-start">
                    <div className={`w-10 h-10 border rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-500 overflow-hidden ${
-                     theme === 'dark' 
-                      ? 'bg-[#121212] border-white/10 text-zinc-500 group-hover:text-white group-hover:bg-[#1a1a1a]' 
+                     theme === 'dark'
+                      ? 'bg-[#121212] border-white/10 text-zinc-500 group-hover:text-white group-hover:bg-[#1a1a1a]'
                       : 'bg-white border-black/10 text-zinc-400 group-hover:text-black group-hover:bg-zinc-100'
                    }`}>
                       {exp.id === 'work-3' ? (
@@ -738,7 +763,7 @@ const App: React.FC = () => {
                         exp.title[0]
                       )}
                    </div>
-                   
+
                    <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
                         <div>
@@ -750,7 +775,7 @@ const App: React.FC = () => {
                            <span className={`text-[9px] uppercase tracking-[0.2em] mt-0.5 ${theme === 'dark' ? 'text-zinc-600' : 'text-zinc-400'}`}>{exp.location}</span>
                         </div>
                       </div>
-                      
+
                       <ul className="space-y-1.5 mb-3">
                         {exp.description?.map((bullet, i) => (
                           <li key={i} className={`text-[13px] leading-relaxed font-light flex gap-2 italic ${
@@ -761,9 +786,9 @@ const App: React.FC = () => {
                           </li>
                         ))}
                       </ul>
-                      
+
                       <div className="flex flex-wrap gap-2">
-                        {TECHNICAL_SKILLS.slice(0, 5).map(skill => {
+                        {(exp.techStack || TECHNICAL_SKILLS.slice(0, 5)).map(skill => {
                           const colors = getTechColors(skill, theme);
                           return (
                             <span key={skill} className={`inline-flex items-center gap-1 px-2 py-0.5 border rounded text-[8px] uppercase tracking-tighter transition-colors ${colors.bg} ${colors.border} ${colors.text} hover:opacity-80`}>
@@ -784,9 +809,9 @@ const App: React.FC = () => {
         <PlusSymbol className={`-bottom-[10px] -left-[10px] ${crosshairColor}`} />
         <PlusSymbol className={`-bottom-[10px] -right-[10px] ${crosshairColor}`} />
       </main>
-      
+
       {/* Resume View Modal */}
-      <ResumeView 
+      <ResumeView
         isOpen={isResumeViewOpen}
         onClose={() => setIsResumeViewOpen(false)}
         resumeUrl={resumePdf}
