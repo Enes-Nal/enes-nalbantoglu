@@ -7,12 +7,14 @@ import SocialHoverCard from './components/SocialHoverCard';
 import ProjectExplorer from './components/ProjectExplorer';
 import FloatingNav from './components/FloatingNav';
 import ResumeView from './components/ResumeView';
-import { RESUME_DATA, TECHNICAL_SKILLS } from './constants';
+import CertificateView from './components/CertificateView';
+import { RESUME_DATA, TECHNICAL_SKILLS, CERTIFICATES } from './constants';
 import profileImage from './assets/image0.jpg';
 import turkishFlag from './assets/turkey-square-national-flag-vector.jpg';
 import linkedinProfileImage from './assets/1754877573002.jpg';
 import githubProfileImage from './assets/77180172.jpg';
 import resumePdf from './assets/Mustafa Enes Nalbantoglu Resume Real.pdf?url';
+import ibmCertificatePdf from './assets/IBM DA0101EN Certificate _ Cognitive Class.pdf?url';
 import whiteTulipLogo from './assets/logo-whitetulip-health-sq-logo.png';
 import borderlessTutorsLogo from './assets/PeNBj3wn_400x400.jpg';
 
@@ -83,13 +85,17 @@ const InfoIcon = ({ icon, theme }: { icon: React.ReactNode, theme: 'light' | 'da
   );
 };
 
-const ASUTrident = () => (
-  <a
-    href="https://asu.edu"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center align-middle mr-1"
-  >
+const ASUTrident = ({ inGroup = false }: { inGroup?: boolean }) => {
+  if (inGroup) {
+    return (
+      <img
+        src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Arizona_State_Sun_Devils_logo.svg/1200px-Arizona_State_Sun_Devils_logo.svg.png"
+        alt="ASU Trident"
+        className="h-[1.5em] w-auto mr-1 transition-transform duration-300 ease-out group-hover:rotate-12 group-hover:scale-110 self-center"
+      />
+    );
+  }
+  return (
     <motion.img
       src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Arizona_State_Sun_Devils_logo.svg/1200px-Arizona_State_Sun_Devils_logo.svg.png"
       alt="ASU Trident"
@@ -97,8 +103,8 @@ const ASUTrident = () => (
       whileHover={{ rotate: 15, scale: 1.1 }}
       transition={{ type: 'spring', stiffness: 300 }}
     />
-  </a>
-);
+  );
+};
 
 const getTechColors = (skill: string, theme: 'light' | 'dark') => {
   const colorMap: Record<string, { bg: string; border: string; text: string; icon: string }> = {
@@ -223,7 +229,7 @@ const InfoRow = ({ icon, text, theme, secondaryText, secondaryIcon }: { icon: Re
   const parts = text.split('Arizona State University');
   const renderedText = parts.length > 1 ? (
     <>
-      {parts[0]} <ASUTrident /><span className="text-[#f6ad55]">Arizona State University</span> {parts[1]}
+      {parts[0]} <a href="https://asu.edu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center align-middle group"><ASUTrident inGroup={true} /><span className="text-[#f6ad55]">Arizona State University</span></a> {parts[1]}
     </>
   ) : text;
 
@@ -262,6 +268,7 @@ const App: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(124);
   const [isLoadingViews, setIsLoadingViews] = useState(true);
   const [isResumeViewOpen, setIsResumeViewOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState<{ url: string; title: string } | null>(null);
 
   // Rotating subtitle text
   const subtitleTexts = [
@@ -545,6 +552,17 @@ const App: React.FC = () => {
       followers: '—',
       bannerImage: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=800'
     },
+    {
+      name: 'Instagram',
+      icon: 'INSTAGRAM',
+      handle: '@enesss_z',
+      url: 'https://www.instagram.com/enesss_z/',
+      profileImage: profileImage,
+      bio: 'Sharing moments, code, and life updates. Follow for behind-the-scenes content and daily inspiration.',
+      following: '—',
+      followers: '—',
+      bannerImage: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800'
+    },
   ], [socialData, githubProfileImage, linkedinProfileImage, profileImage]);
 
   const getIcon = (name: string) => {
@@ -552,6 +570,11 @@ const App: React.FC = () => {
       case 'GitHub': return <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>;
       case 'Twitter': return <span className="font-bold text-xs">𝕏</span>;
       case 'LinkedIn': return <span className="font-bold text-xs">in</span>;
+      case 'Instagram': return (
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      );
       default: return <span className="w-4 h-4 rounded-full bg-current opacity-20" />;
     }
   };
@@ -612,7 +635,7 @@ const App: React.FC = () => {
         <DraftingSection theme={theme} id="about">
           <div className="max-w-2xl space-y-3 mb-6">
             <p className={`text-sm md:text-[15px] leading-relaxed font-light ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
-              I am a Computer Science student at <span className="font-medium whitespace-nowrap"><ASUTrident /><span className="text-[#f6ad55]">Arizona State University</span></span> dedicated to building precision-engineered software.
+              I am a Computer Science student at <span className="font-medium whitespace-nowrap"><a href="https://asu.edu" target="_blank" rel="noopener noreferrer" className="inline-flex items-center align-middle group"><ASUTrident inGroup={true} /><span className="text-[#f6ad55]">Arizona State University</span></a></span> dedicated to building precision-engineered software.
             </p>
 
             <div className={`text-sm md:text-[15px] leading-relaxed font-light ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
@@ -744,7 +767,7 @@ const App: React.FC = () => {
         </DraftingSection>
 
         {/* 6. Experiences Section */}
-        <DraftingSection theme={theme} last id="experiences">
+        <DraftingSection theme={theme} id="experiences">
           <h2 className="text-xl font-semibold mb-8 tracking-tight text-inherit">Experiences.</h2>
           <div className="space-y-10">
             {workExp.map((exp) => (
@@ -805,6 +828,73 @@ const App: React.FC = () => {
           </div>
         </DraftingSection>
 
+        {/* 7. Certificates Section */}
+        <DraftingSection theme={theme} last id="certificates">
+          <h2 className="text-xl font-semibold mb-8 tracking-tight text-inherit">Certificates.</h2>
+          <div className="space-y-6">
+            {CERTIFICATES.map((cert) => (
+              <div key={cert.id} className="relative group">
+                <div className="flex flex-col md:flex-row gap-5 items-start">
+                  <div className={`w-10 h-10 border rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-500 overflow-hidden shrink-0 ${
+                    theme === 'dark'
+                      ? 'bg-[#121212] border-white/10 text-zinc-500 group-hover:text-white group-hover:bg-[#1a1a1a]'
+                      : 'bg-white border-black/10 text-zinc-400 group-hover:text-black group-hover:bg-zinc-100'
+                  }`}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-2">
+                      <div>
+                        <h4 className="text-base font-medium tracking-tight text-inherit">{cert.title}</h4>
+                        <p className={`text-[11px] ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>{cert.issuer}</p>
+                      </div>
+                      <div className="md:text-right flex flex-col md:items-end">
+                        <span className={`text-[11px] font-medium tracking-wide ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}>{cert.issueDate}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      <button
+                        onClick={() => setSelectedCertificate({
+                          url: cert.id === 'cert-1' ? ibmCertificatePdf : cert.pdfUrl,
+                          title: cert.title
+                        })}
+                        className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all border ${
+                          theme === 'dark'
+                            ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818] hover:border-white/20'
+                            : 'bg-white border-black/10 text-black hover:bg-zinc-50 hover:border-black/20'
+                        }`}
+                      >
+                        View Certificate
+                      </button>
+                      {cert.verificationUrl && (
+                        <a
+                          href={cert.verificationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-all border ${
+                            theme === 'dark'
+                              ? 'bg-[#111111] border-white/10 text-white hover:bg-[#181818] hover:border-white/20'
+                              : 'bg-white border-black/10 text-black hover:bg-zinc-50 hover:border-black/20'
+                          }`}
+                        >
+                          Verify
+                          <svg className="w-3 h-3 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </DraftingSection>
+
         {/* Footer intersection crosshairs */}
         <PlusSymbol className={`-bottom-[10px] -left-[10px] ${crosshairColor}`} />
         <PlusSymbol className={`-bottom-[10px] -right-[10px] ${crosshairColor}`} />
@@ -815,6 +905,15 @@ const App: React.FC = () => {
         isOpen={isResumeViewOpen}
         onClose={() => setIsResumeViewOpen(false)}
         resumeUrl={resumePdf}
+        theme={theme}
+      />
+
+      {/* Certificate View Modal */}
+      <CertificateView
+        isOpen={selectedCertificate !== null}
+        onClose={() => setSelectedCertificate(null)}
+        certificateUrl={selectedCertificate?.url || ''}
+        certificateTitle={selectedCertificate?.title || ''}
         theme={theme}
       />
     </div>

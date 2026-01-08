@@ -41,8 +41,13 @@ const TablerIcon = ({ name, className }: { name: string, className?: string }) =
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
       </svg>
     ),
+    certificate: (
+      <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+      </svg>
+    ),
   };
-  
+
   return icons[name] || null;
 };
 
@@ -56,20 +61,29 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
     { id: 'contributions', label: 'Activity', icon: 'chart' },
     { id: 'projects', label: 'Projects', icon: 'briefcase' },
     { id: 'experiences', label: 'Experience', icon: 'building' },
+    { id: 'certificates', label: 'Certificates', icon: 'certificate' },
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const sections = navItems.map(item => document.getElementById(item.id));
-      const scrollPosition = currentScrollY + 150;
+    let ticking = false;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(navItems[i].id);
-          break;
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const sections = navItems.map(item => document.getElementById(item.id));
+          const scrollPosition = currentScrollY + 150;
+
+          for (let i = sections.length - 1; i >= 0; i--) {
+            const section = sections[i];
+            if (section && section.offsetTop <= scrollPosition) {
+              setActiveSection(navItems[i].id);
+              break;
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -94,40 +108,55 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
   return (
     <nav
       className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 ${
-        theme === 'dark' 
-          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg' 
+        theme === 'dark'
+          ? 'bg-[#0a0a0a]/90 backdrop-blur-md border-white/10 shadow-lg'
           : 'bg-white/90 backdrop-blur-md border-zinc-200 shadow-lg'
       } border rounded-full px-4 py-2`}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 relative">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => scrollToSection(item.id)}
-            className={`relative px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${
+            className={`relative px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200 flex items-center gap-1.5 z-10 ${
               activeSection === item.id
                 ? theme === 'dark'
-                  ? 'bg-white text-black'
-                  : 'bg-black text-white'
+                  ? 'text-black'
+                  : 'text-white'
                 : theme === 'dark'
                 ? 'text-zinc-400 hover:text-white hover:bg-white/10'
                 : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
             }`}
           >
-            <TablerIcon name={item.icon} className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{item.label}</span>
+            {activeSection === item.id && (
+              <motion.div
+                layoutId="active-nav"
+                className={`absolute inset-0 rounded-full ${
+                  theme === 'dark' ? 'bg-white' : 'bg-black'
+                }`}
+                transition={{
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 30,
+                  mass: 0.5,
+                  bounce: 0.1
+                }}
+              />
+            )}
+            <TablerIcon name={item.icon} className="w-3.5 h-3.5 relative z-10" />
+            <span className="hidden sm:inline relative z-10">{item.label}</span>
           </button>
         ))}
-        
+
         {/* Divider */}
         <div className={`h-6 w-px ${theme === 'dark' ? 'bg-white/10' : 'bg-zinc-300'}`} />
-        
+
         {/* Views Counter */}
         <div className={`flex items-center gap-2 px-3 py-1.5 border rounded-full transition-colors duration-500 whitespace-nowrap ${
           theme === 'dark' ? 'bg-[#0f0f0f] border-white/10' : 'bg-white border-black/10'
         }`}>
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <motion.span 
+          <motion.span
             key={displayCount}
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -137,9 +166,9 @@ const FloatingNav: React.FC<FloatingNavProps> = ({ theme, toggleTheme, displayCo
             {displayCount} VIEWS
           </motion.span>
         </div>
-        
+
         {/* Theme Toggle */}
-        <button 
+        <button
           onClick={toggleTheme}
           className={`transition-colors p-1.5 rounded-full ${theme === 'dark' ? 'text-zinc-500 hover:text-white hover:bg-white/10' : 'text-zinc-400 hover:text-black hover:bg-zinc-100'}`}
         >

@@ -132,3 +132,23 @@ export const LANGUAGES = [
   { name: 'English', level: 'Fluent' },
   { name: 'Azerbaijani', level: 'Conversational' }
 ];
+
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  pdfUrl: string;
+  verificationUrl?: string;
+}
+
+export const CERTIFICATES: Certificate[] = [
+  {
+    id: 'cert-1',
+    title: 'Data Analysis with Python',
+    issuer: 'IBM (Cognitive Class)',
+    issueDate: 'January 2026',
+    pdfUrl: './assets/IBM DA0101EN Certificate _ Cognitive Class.pdf',
+    verificationUrl: 'https://courses.cognitiveclass.ai/certificates/977bfa9b836d493f8ce954194eec64d2'
+  }
+];
