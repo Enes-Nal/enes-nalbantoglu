@@ -766,6 +766,89 @@ const App: React.FC = () => {
           )}
         </DraftingSection>
 
+        {/* 5.5. Design Work Section */}
+        <DraftingSection theme={theme} id="design-work">
+          <h2 className="text-xl font-semibold mb-6 tracking-tight text-inherit">Design Work.</h2>
+          <p className={`text-sm md:text-[15px] leading-relaxed font-light mb-8 max-w-2xl ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-600'}`}>
+            A selection of graphic design work including social media graphics, thumbnails, and visual content for various clients and projects.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Discord Bot Project */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className={`relative group overflow-hidden rounded-xl border transition-all ${
+                theme === 'dark' 
+                  ? 'bg-[#111111] border-white/10 hover:border-white/20' 
+                  : 'bg-white border-black/10 hover:border-black/20'
+              }`}
+            >
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Make%20your%20README-Q0jOnmLmjZyTTdNh8ENuGWHufvMQ6k.png" 
+                  alt="Disallowed Content - Discord Bot Project"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className={`text-sm font-semibold mb-1 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
+                  Disallowed Content
+                </h3>
+                <p className={`text-[11px] font-light ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  Discord bot promotional graphic with dark theme and red accents
+                </p>
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {['Social Media', 'Branding'].map(tag => (
+                    <span key={tag} className={`px-2 py-0.5 rounded text-[8px] uppercase tracking-wider ${
+                      theme === 'dark' 
+                        ? 'bg-white/5 text-zinc-400 border border-white/10' 
+                        : 'bg-black/5 text-zinc-500 border border-black/10'
+                    }`}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Next Level Soccer */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className={`relative group overflow-hidden rounded-xl border transition-all ${
+                theme === 'dark' 
+                  ? 'bg-[#111111] border-white/10 hover:border-white/20' 
+                  : 'bg-white border-black/10 hover:border-black/20'
+              }`}
+            >
+              <div className="aspect-video overflow-hidden">
+                <img 
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled-2-Recovered.png-yUY1HMMYtNZii171UfpxLmf0La75yh.jpeg" 
+                  alt="Next Level Soccer - Sports Photography Composition"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className={`text-sm font-semibold mb-1 ${theme === 'dark' ? 'text-white' : 'text-zinc-900'}`}>
+                  Next Level Soccer
+                </h3>
+                <p className={`text-[11px] font-light ${theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  Sports photography composition with dramatic typography
+                </p>
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {['Sports', 'Photography'].map(tag => (
+                    <span key={tag} className={`px-2 py-0.5 rounded text-[8px] uppercase tracking-wider ${
+                      theme === 'dark' 
+                        ? 'bg-white/5 text-zinc-400 border border-white/10' 
+                        : 'bg-black/5 text-zinc-500 border border-black/10'
+                    }`}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </DraftingSection>
+
         {/* 6. Experiences Section */}
         <DraftingSection theme={theme} id="experiences">
           <h2 className="text-xl font-semibold mb-8 tracking-tight text-inherit">Experiences.</h2>
