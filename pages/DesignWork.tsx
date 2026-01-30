@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+
+console.log("[v0] DesignWork component loading...");
 import GridBackground from '../components/GridBackground';
 
 const DESIGN_WORK = [
